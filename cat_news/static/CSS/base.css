@@ -1,0 +1,78 @@
+
+body {
+    display: flex;
+    margin: 0;
+}
+/* Стили для бокового меню */
+.sidebar {
+    width: 13%;
+    background: lightgrey;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 1%;
+    box-shadow: 10px 5px 5px darkgrey;
+    border: 1px solid grey;
+    border-radius: 2%;
+
+
+}
+.sidebar h4 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.sidebar ul {
+    list-style: none;
+    padding-left: 0;
+}
+.sidebar li {
+    padding: 10px 20px;
+}
+.sidebar li a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+.sidebar li a:hover {
+    background-color: #ddd;
+}
+/* Стили для основного контента */
+.content {
+    margin-left: 15%;
+    width: 85%;
+    padding: 20px;
+
+
+}
+img{
+max-width: 20%;
+height: auto;
+}
+.posts-body{
+background:lightgrey;
+padding: 20px;
+border-radius: 10px;
+border: 3px solid grey;
+box-shadow: 10px 5px 5px darkgrey;
+flex-basis: 40%;
+margin-bottom: 2%;
+text-decoration: none;
+color: black;
+}
+.posts-body:hover{
+background:grey;
+text-decoration: none;
+color: white;
+}
+.about{
+background:lightgrey;
+}
+.post-content{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1%;
+}
+.dit-img{
+width: 100%;
+}

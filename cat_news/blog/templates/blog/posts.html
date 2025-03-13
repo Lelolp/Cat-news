@@ -1,0 +1,21 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block title %}Посты{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Список постов</h1>
+    <br>
+    <div class="post-content">
+    {% for post in posts %}
+            <a class="posts-body" href="http://127.0.0.1:8000/posts/{{ post.id }}">
+                <h3 class="post-title">{{ post.title }}</h3>
+                <p class="post-text">{{ post.content|truncatewords:15 }}</p>
+                <img src="{% get_media_prefix %}{{ post.picture }}" alt="NET KARTINK BRAT">
+            </a>
+            <br><br>
+    {% empty %}
+        <p>Нет доступных постов.</p>
+    {% endfor %}
+    </div>
+{% endblock %}
