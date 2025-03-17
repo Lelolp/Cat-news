@@ -1,10 +1,11 @@
+from django.conf import settings
 import requests
 def generate_news_post():
     # Define the prompt to be sent
     prompt = 'Please generate a fun news post with title of max size 50 symbols and content choose of the themes like food recepies or jokes or fun fake news or interestinght facts or cats or mems or techonolagy news.submit the answer in the "TITLE|CONTENT" format"'
 
     # Enter E-mail to generate API
-    api_key = '4b6a6dcf208b1d0244efe2dbd0414c56'
+    api_key = settings.GPT_KEY
 
     # Define the default model if none is specified
     default_model = 'gpt-3.5-turbo'
@@ -25,7 +26,7 @@ def generate_news_post():
 
         # Parse and print the response
         data = response.json()
-        return data['content']
+        return data
 
     except requests.RequestException as e:
         # Print any errors
