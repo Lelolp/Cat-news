@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from .views import posts
+from .views import posts, generate_new_post
 from .views import about_us
 from .views import post_detail
 
@@ -25,4 +25,5 @@ urlpatterns = [
     path('', posts,name="posts"),
     path('about-us/', about_us,name="about-us"),
     path('posts/<int:post_id>/',post_detail,name="post-detail"),
+    path('posts/generate-new/',generate_new_post,name="generate-new-post"),
 ]

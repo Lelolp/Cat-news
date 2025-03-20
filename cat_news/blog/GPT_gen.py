@@ -1,33 +1,68 @@
-from django.conf import settings
+import random
+from django.core.files.base import ContentFile
 import requests
-def generate_news_post():
-    # Define the prompt to be sent
-    prompt = 'Please generate a fun news post with title of max size 50 symbols and content choose of the themes like food recepies or jokes or fun fake news or interestinght facts or cats or mems or techonolagy news.submit the answer in the "TITLE|CONTENT" format"'
+from django.conf import settings
+from openai import OpenAI
 
-    # Enter E-mail to generate API
-    api_key = settings.GPT_KEY
 
-    # Define the default model if none is specified
-    default_model = 'gpt-3.5-turbo'
+class PostGenerator:
+    def __init__(self, key=None, chat_model=None, img_model=None):
+        if key:
+            self.key = key
+        else:
+            if settings.GPT_KEY:
+                self.key = settings.GPT_KEY
+            else:
+                raise ValueError('GPT key not provided')
+        if chat_model:
+            self.chat_model = chat_model
+        else:
+            self.chat_model = 'gpt-4o-mini-2024-07-18'
+        if img_model:
+            self.img_model = img_model
+        else:
+            self.img_model = 'dall-e-2'
+        self.base_prompt = "Please generate a fun news post with title of max size 50 symbols,write the answer in the TITLE|CONTENT format,theme of the post is "
+        self.theme_prompts = [
+                              "food",
+                              "recipes",
+                              "jokes",
+                              "fun fake news",
+                              "interesting facts",
+                              "cats",
+                              "memes",
+                              "technological news"
+                              ]
+        self.prompt = self.base_prompt + random.choice(self.theme_prompts)
+        self.client = OpenAI(api_key=self.key)
+    def generate_news_post(self, prompt=None):
+        if prompt:
+            self.prompt = prompt
+        response = self.client.chat.completions.create(
+            model=self.chat_model,
+            messages=[{
+                "role": "user",
+                "content": self.prompt
+            }]
+        )
+        post = dict()
+        post['title'] = response.choices[0].message.content.split('|')[0]
+        post['text'] = response.choices[0].message.content.split('|')[1]
+        post['image'] = self.save_image_from_url(self.generate_image(prompt=post['title']))
+        return post
+    def generate_image(self, prompt):
+        response = self.client.images.generate(
+            model=self.img_model,
+            prompt=prompt,
+            size="256x256",
+            quality="standard",
+            n=1,
+        )
+        return response.data[0].url
 
-    # Uncomment the model you want to use, and comment out the others
-    #model = 'gpt-4'
-    # model = 'gpt-4-32k'
-    # model = 'gpt-3.5-turbo-0125'
-    model = default_model
-
-    # Build the URL to call
-    api_url = f'http://195.179.229.119/gpt/api.php?prompt={requests.utils.quote(prompt)}&api_key={requests.utils.quote(api_key)}&model={requests.utils.quote(model)}'
-
-    try:
-        # Execute the HTTP request
-        response = requests.get(api_url)
-        response.raise_for_status()  # Raise an error for bad HTTP status codes
-
-        # Parse and print the response
-        data = response.json()
-        return data
-
-    except requests.RequestException as e:
-        # Print any errors
-        print(f'Request Error: {e}')
+    def save_image_from_url(self, url):
+        response = requests.get(url)
+        if response.status_code == 200:
+            return ContentFile(content=response.content, name='image.png')
+        else:
+            return None
